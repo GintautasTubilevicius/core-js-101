@@ -178,11 +178,11 @@ function isInsideCircle(circle, point) {
  *   'abracadabra'  => 'c'
  *   'entente' => null
  */
-function findFirstSingleChar(/* str */) {
-  throw new Error('Not implemented');
-  // for (let i = 0; i < str.length; i += 1) {
-  //   if (str.indexOf(str.charAt(i), str.indexOf(str.charAt(i)) + 1) < 0) return str.charAt(i);
-  // }
+function findFirstSingleChar(str) {
+  for (let i = 0; i < str.length; i += 1) {
+    if (str.indexOf(str.charAt(i), str.indexOf(str.charAt(i)) + 1) < 0) return str.charAt(i);
+  }
+  return null;
 }
 
 
@@ -337,18 +337,13 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
-  // const stack = [];
-  // const open = ['[', '(', '<', '{'];
-  // const close = [']', ')', '>', '}'];
-  // for (let i = 0; i < str.length; i += 1) {
-  //   if (open.indexOf(str[i]) !== -1) {
-  //     stack.push(str[i]);
-  //   }
-  //   if (open.indexOf(stack.pop()) !== close.indexOf(str[i])) return false;
-  // }
-  // return !stack.length;
+function isBracketsBalanced(str) {
+  let test = str;
+  while (true) {
+    const newStr = test.replace(/<>|\[\]|\{\}|\(\)/, '');
+    if (newStr === test) return newStr.length === 0;
+    test = newStr;
+  }
 }
 
 /**
@@ -470,15 +465,49 @@ function getMatrixProduct(m1, m2) {
  *
  */
 function evaluateTicTacToePosition(position) {
-  function checkCombination(v1, v2, v3) {
-    return v1 === v2 && v2 === v3 && v1 !== undefined;
-  }
-  for (let i = 0; i < 3; i += 1) {
-    if (checkCombination(position[i][0], position[i][1], position[i][2])) return position[i][0];
-    if (checkCombination(position[0][i], position[1][i], position[2][i])) return position[0][i];
-    if (checkCombination(position[0][0], position[1][1], position[2][2])) return position[0][0];
-    if (checkCombination(position[0][2], position[1][1], position[2][0])) return position[0][2];
-  }
+  // function checkCombination(v1, v2, v3) {
+  //   return v1 === v2 && v2 === v3 && v1 !== undefined;
+  // }
+  // for (let i = 0; i < 3; i += 1) {
+  //   if (checkCombination(position[i][0], position[i][1], position[i][2])) return position[i][0];
+  //   if (checkCombination(position[0][i], position[1][i], position[2][i])) return position[0][i];
+  //   if (checkCombination(position[0][0], position[1][1], position[2][2])) return position[0][0];
+  //   if (checkCombination(position[0][2], position[1][1], position[2][0])) return position[0][2];
+  // }
+  const combinations = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  const getField = (num) => {
+    const row = Math.floor(num / 3);
+    const col = num % 3;
+    return position[row][col];
+  };
+
+  const tryConmbin = (combin) => {
+    const valuesFields = combin.map((x) => getField(x));
+    const every = (s) => valuesFields.every((x) => x === s);
+    if (every('X')) return 'X';
+    if (every('0')) return '0';
+    return undefined;
+  };
+
+  let result = null;
+
+  const handleCombin = (combin) => {
+    result = tryConmbin(combin);
+    return result;
+  };
+
+  combinations.find(handleCombin);
+  return result;
 }
 
 
