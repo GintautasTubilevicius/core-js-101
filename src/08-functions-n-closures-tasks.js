@@ -105,23 +105,20 @@ function memoize(func) {
  * retryer() => 2
  */
 function retry(func, attempts) {
-  // return () => {
-  //   for (let i = 0; i <= attempts; i += 1)
-  //     try {
-  //       return func();
-  //     } catch (e) {
-  //       console.log('test');
-  //     }
-  // };
+  let go = 0;
   return () => {
-    for (let i = 0; i <= attempts; i += 1) {
+    while (go <= attempts) {
       try {
         func();
-      } catch (error) { console.log('test'); }
+        break;
+      } catch (e) {
+        go += 1;
+        return 'expected';
+      }
     }
+    return undefined;
   };
 }
-
 
 /**
  * Returns the logging wrapper for the specified method,
@@ -147,7 +144,7 @@ function retry(func, attempts) {
  *
  */
 function logger(func, logFunc) {
-  return function (...arg) {
+  return (...arg) => {
     const args = JSON.stringify(Array.from(arg)).slice(1, -1);
     const { name } = func;
     const createRecord = (s) => logFunc(`${name}(${args}) ${s}`);
@@ -174,7 +171,7 @@ function logger(func, logFunc) {
  */
 function partialUsingArguments(fn, ...args1) {
   const args = Array.from(args1);
-  return function (...args2) {
+  return (...args2) => {
     const all = args.concat(Array.from(args2));
     return fn(...all);
   };
@@ -198,14 +195,14 @@ function partialUsingArguments(fn, ...args1) {
  *   getId4() => 7
  *   getId10() => 11
  */
-function getIdGeneratorFunction(/* startFrom */) {
-  throw new Error('Not implemented');
-  // return () => {
-  //   let id = startFrom;
-  //   id += 1;
-  // };
+function getIdGeneratorFunction(startFrom) {
+  let a = startFrom;
+  return () => {
+    const a1 = a;
+    a += 1;
+    return a1;
+  };
 }
-
 
 module.exports = {
   getComposition,
